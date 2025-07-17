@@ -41,19 +41,3 @@ Uma aplicação de chat P2P que se descobre na rede local usando mDNS e troca me
   - Mensagens recebidas de outros pares são exibidas na interface local.
 
 ---
-
-## Estrutura de Código (exemplo)
-
-```go
-type PeerInfo struct {
-  Name string
-  Addr string
-  Port int
-}
-
-func main() {
-  // 1. Inicia HTTP + WS na porta 0
-  // 2. Anuncia & procura via zeroconf (_meuchat._tcp)
-  // 3. Rastrea pares em map[string]PeerInfo
-  // 4. Gerencia mensagens WS de entrada/saída
-}
