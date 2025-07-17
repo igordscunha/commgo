@@ -1,4 +1,4 @@
-# MeuChat P2P em Go
+# Chat Offline P2P em Go
 
 Uma aplicação de chat P2P que se descobre na rede local usando mDNS e troca mensagens via WebSockets.
 
