@@ -14,22 +14,17 @@ import (
 	"syscall"
 	"time"
 
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 	"github.com/grandcat/zeroconf"
+	"github.com/igordscunha/commgo/mypkg"
 )
 
 const (
 	serviceName = "_meuchat._tcp"
 	domain      = "local."
 )
-
-type Mensagem struct {
-	ID        string    `json:"id"`
-	Username  string    `json:"username"`
-	Texto     string    `json:"texto"`
-	Timestamp time.Time `json:"timestamp"`
-}
 
 type Peer struct {
 	conn *websocket.Conn
@@ -46,17 +41,26 @@ var (
 	}
 
 	localUsername string
+	teaProgram    *tea.Program
 )
 
 func wsHandler(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Printf("Erro ao fazer upgrade para WEbSocket: %v", err)
+		log.Printf("Erro ao fazer upgrade para WebSocket: %v", err)
 		return
 	}
 
 	defer conn.Close()
 	log.Printf("Peer conectado de: %s", conn.RemoteAddr())
+
+	addr := conn.RemoteAddr().String()
+	defer func() {
+		peersMutex.Lock()
+		delete(peers, addr)
+		peersMutex.Unlock()
+		log.Printf("Conexão com %s fechada e removida.", addr)
+	}()
 
 	for {
 		_, mensagemBytes, err := conn.ReadMessage()
@@ -65,13 +69,15 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 
-		var msg Mensagem
+		var msg mypkg.Mensagem
 		if err := json.Unmarshal(mensagemBytes, &msg); err != nil {
 			log.Printf("Erro ao decodificar mensagem JSON: %v", err)
 			continue
 		}
 
-		fmt.Printf("\n[%s] %s: %s\n> ", msg.Timestamp.Format("15:04"), msg.Username, msg.Texto)
+		if teaProgram != nil {
+			teaProgram.Send(mypkg.IncomingMsg(msg))
+		}
 	}
 }
 
@@ -79,7 +85,7 @@ func broadcastMensagem(texto string) {
 	peersMutex.RLock()
 	defer peersMutex.RUnlock()
 
-	msg := Mensagem{
+	msg := mypkg.Mensagem{
 		ID:        uuid.New().String(),
 		Username:  localUsername,
 		Texto:     texto,
@@ -96,12 +102,6 @@ func broadcastMensagem(texto string) {
 		if err := peer.conn.WriteMessage(websocket.TextMessage, mensagemBytes); err != nil {
 			log.Printf("Erro ao enviar mensagem para %s: %v. Removendo peer.", addr, err)
 			peer.conn.Close()
-
-			go func(addrRemovivel string) {
-				peersMutex.Lock()
-				delete(peers, addrRemovivel)
-				peersMutex.Unlock()
-			}(addr)
 		}
 	}
 }
@@ -121,12 +121,12 @@ func discoverPeers(ctx context.Context) {
 
 			peerAddr := fmt.Sprintf("%s:%d", entry.AddrIPv4[0], entry.Port)
 
-			peersMutex.Lock()
-			if _, existe := peers[peerAddr]; existe {
-				peersMutex.Unlock()
+			peersMutex.RLock()
+			_, existe := peers[peerAddr]
+			peersMutex.RUnlock()
+			if existe {
 				continue
 			}
-			peersMutex.Unlock()
 
 			log.Printf("Peer descoberto: %s em %s", entry.Instance, peerAddr)
 			wsURL := "ws://" + peerAddr + "/ws"
@@ -140,7 +140,7 @@ func discoverPeers(ctx context.Context) {
 			log.Printf("Conexão WebSocket estabelecida com %s", peerAddr)
 			novoPeer := &Peer{conn: conn}
 			peersMutex.Lock()
-			peers[peerAddr] = novoPeer
+			peers[conn.RemoteAddr().String()] = novoPeer
 			peersMutex.Unlock()
 		}
 	}(entries)
@@ -149,11 +149,21 @@ func discoverPeers(ctx context.Context) {
 	if err := resolver.Browse(ctx, serviceName, domain, entries); err != nil {
 		log.Fatalf("Falha ao buscar serviços mDNS: %v", err)
 	}
+	<-ctx.Done()
 }
 
 // ##### MAIN #####
 
 func main() {
+
+	logFile, err := tea.LogToFile("debug.log", "debug")
+	if err != nil {
+		fmt.Println("fatal:", err)
+		os.Exit(1)
+	}
+	defer logFile.Close()
+
+	log.Println("Chat iniciado...")
 	fmt.Print("Digite seu nome de usuário: ")
 	scanner := bufio.NewScanner(os.Stdin)
 
@@ -193,29 +203,23 @@ func main() {
 	defer cancel()
 	go discoverPeers(ctx)
 
+	initialModel := mypkg.InitialModel(localUsername, broadcastMensagem)
+	teaProgram = tea.NewProgram(initialModel, tea.WithAltScreen())
+
 	stopChan := make(chan os.Signal, 1)
 	signal.Notify(stopChan, syscall.SIGINT, syscall.SIGTERM)
+
 	go func() {
-		<-stopChan
+		sigChan := make(chan os.Signal, 1)
+		signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+		<-sigChan
 		log.Println("Encerrando a aplicação...")
 		cancel()
-		peersMutex.Lock()
-
-		for addr, peer := range peers {
-			peer.conn.Close()
-			delete(peers, addr)
-		}
-		peersMutex.Unlock()
-		os.Exit(0)
+		server.Shutdown()
+		teaProgram.Quit()
 	}()
 
-	fmt.Print("> ")
-	for scanner.Scan() {
-		texto := scanner.Text()
-		if texto != "" {
-			broadcastMensagem(texto)
-		}
-
-		fmt.Print("> ")
+	if _, err := teaProgram.Run(); err != nil {
+		log.Fatalf("Erro ao executar o design Bubble Tea: %v", err)
 	}
 }
