@@ -18,7 +18,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 	"github.com/grandcat/zeroconf"
-	"github.com/igordscunha/commgo/mypkg"
+	"github.com/igordscunha/commgo/internal/chat"
 )
 
 const (
@@ -69,14 +69,14 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 
-		var msg mypkg.Mensagem
+		var msg chat.Mensagem
 		if err := json.Unmarshal(mensagemBytes, &msg); err != nil {
 			log.Printf("Erro ao decodificar mensagem JSON: %v", err)
 			continue
 		}
 
 		if teaProgram != nil {
-			teaProgram.Send(mypkg.IncomingMsg(msg))
+			teaProgram.Send(chat.IncomingMsg(msg))
 		}
 	}
 }
@@ -85,7 +85,7 @@ func broadcastMensagem(texto string) {
 	peersMutex.RLock()
 	defer peersMutex.RUnlock()
 
-	msg := mypkg.Mensagem{
+	msg := chat.Mensagem{
 		ID:        uuid.New().String(),
 		Username:  localUsername,
 		Texto:     texto,
@@ -203,7 +203,7 @@ func main() {
 	defer cancel()
 	go discoverPeers(ctx)
 
-	initialModel := mypkg.InitialModel(localUsername, broadcastMensagem)
+	initialModel := chat.InitialModel(localUsername, broadcastMensagem)
 	teaProgram = tea.NewProgram(initialModel, tea.WithAltScreen())
 
 	stopChan := make(chan os.Signal, 1)

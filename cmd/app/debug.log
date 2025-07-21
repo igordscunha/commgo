@@ -1,0 +1,60 @@
+debug 2025/07/21 19:43:48 Chat iniciado...
+debug 2025/07/21 19:43:52 Servidor iniciado. Escutando em http://localhost:38663
+debug 2025/07/21 19:43:52 Serviço 'Igor1' anunciado na porta 38663
+debug 2025/07/21 19:43:52 Buscando por outros chats na rede...
+debug 2025/07/21 19:44:15 Chat iniciado...
+debug 2025/07/21 19:44:16 Servidor iniciado. Escutando em http://localhost:37725
+debug 2025/07/21 19:44:16 Serviço 'Igor2' anunciado na porta 37725
+debug 2025/07/21 19:44:16 Buscando por outros chats na rede...
+debug 2025/07/21 19:44:16 Peer descoberto: Igor1 em 192.168.0.152:38663
+debug 2025/07/21 19:44:16 Peer descoberto: Igor2 em 192.168.0.152:37725
+debug 2025/07/21 19:44:16 Peer conectado de: 192.168.0.152:60408
+debug 2025/07/21 19:44:16 Conexão WebSocket estabelecida com 192.168.0.152:38663
+debug 2025/07/21 19:44:16 Peer conectado de: 192.168.0.152:34600
+debug 2025/07/21 19:44:16 Conexão WebSocket estabelecida com 192.168.0.152:37725
+debug 2025/07/21 19:46:10 Peer desconectado: 192.168.0.152:34600, Erro: websocket: close 1006 (abnormal closure): unexpected EOF
+debug 2025/07/21 19:46:10 Conexão com 192.168.0.152:34600 fechada e removida.
+debug 2025/07/21 19:48:16 Chat iniciado...
+debug 2025/07/21 19:48:18 Servidor iniciado. Escutando em http://localhost:41055
+debug 2025/07/21 19:48:18 Serviço 'Igor1' anunciado na porta 41055
+debug 2025/07/21 19:48:18 Buscando por outros chats na rede...
+debug 2025/07/21 19:48:22 Chat iniciado...
+debug 2025/07/21 19:48:23 Servidor iniciado. Escutando em http://localhost:34125
+debug 2025/07/21 19:48:23 Serviço 'Igor2' anunciado na porta 34125
+debug 2025/07/21 19:48:23 Buscando por outros chats na rede...
+debug 2025/07/21 19:48:23 Peer descoberto: Igor2 em 192.168.0.152:34125
+debug 2025/07/21 19:48:23 Peer descoberto: Igor1 em 192.168.0.152:41055
+debug 2025/07/21 19:48:23 Peer conectado de: 192.168.0.152:50908
+debug 2025/07/21 19:48:23 Conexão WebSocket estabelecida com 192.168.0.152:34125
+debug 2025/07/21 19:48:23 Conexão WebSocket estabelecida com 192.168.0.152:41055
+debug 2025/07/21 19:48:23 Peer conectado de: 192.168.0.152:50932
+debug 2025/07/21 19:49:32 Peer desconectado: 192.168.0.152:50908, Erro: websocket: close 1006 (abnormal closure): unexpected EOF
+debug 2025/07/21 19:49:32 Conexão com 192.168.0.152:50908 fechada e removida.
+debug 2025/07/21 19:51:18 Chat iniciado...
+debug 2025/07/21 19:51:21 Chat iniciado...
+debug 2025/07/21 19:51:23 Servidor iniciado. Escutando em http://localhost:41231
+debug 2025/07/21 19:51:23 Serviço 'Igor1' anunciado na porta 41231
+debug 2025/07/21 19:51:23 Buscando por outros chats na rede...
+debug 2025/07/21 19:51:33 Servidor iniciado. Escutando em http://localhost:38691
+debug 2025/07/21 19:51:33 Serviço 'Igor2' anunciado na porta 38691
+debug 2025/07/21 19:51:33 Buscando por outros chats na rede...
+debug 2025/07/21 19:51:33 Peer descoberto: Igor2 em 192.168.0.152:38691
+debug 2025/07/21 19:51:33 Peer descoberto: Igor1 em 192.168.0.152:41231
+debug 2025/07/21 19:51:33 Peer conectado de: 192.168.0.152:48272
+debug 2025/07/21 19:51:33 Conexão WebSocket estabelecida com 192.168.0.152:38691
+debug 2025/07/21 19:51:33 Peer conectado de: 192.168.0.152:55440
+debug 2025/07/21 19:51:33 Conexão WebSocket estabelecida com 192.168.0.152:41231
+debug 2025/07/21 19:53:14 Peer desconectado: 192.168.0.152:48272, Erro: websocket: close 1006 (abnormal closure): unexpected EOF
+debug 2025/07/21 19:53:14 Conexão com 192.168.0.152:48272 fechada e removida.
+debug 2025/07/21 19:53:16 Chat iniciado...
+debug 2025/07/21 19:53:17 Servidor iniciado. Escutando em http://localhost:37905
+debug 2025/07/21 19:53:17 Serviço 'Igor1' anunciado na porta 37905
+debug 2025/07/21 19:53:17 Buscando por outros chats na rede...
+debug 2025/07/21 19:53:17 Peer descoberto: Igor1 em 192.168.0.152:37905
+debug 2025/07/21 19:53:17 Peer descoberto: Igor2 em 192.168.0.152:38691
+debug 2025/07/21 19:53:17 Peer conectado de: 192.168.0.152:40882
+debug 2025/07/21 19:53:17 Conexão WebSocket estabelecida com 192.168.0.152:37905
+debug 2025/07/21 19:53:17 Peer conectado de: 192.168.0.152:54748
+debug 2025/07/21 19:53:17 Conexão WebSocket estabelecida com 192.168.0.152:38691
+debug 2025/07/21 19:54:44 Peer desconectado: 192.168.0.152:54748, Erro: websocket: close 1006 (abnormal closure): unexpected EOF
+debug 2025/07/21 19:54:44 Conexão com 192.168.0.152:54748 fechada e removida.
